@@ -119,6 +119,13 @@ static int pb_repeated_add(lua_State* L)
     	const char* str = luaL_checklstring(L, 2, &strlen);
         reflection->AddString(message, field, str);
     }
+    else if (field->type() == google::protobuf::FieldDescriptor::TYPE_ENUM)
+	{
+		int value = static_cast<int>(luaL_checkinteger(L, 3));
+		const EnumValueDescriptor* enum_value =
+			field->enum_type()->FindValueByNumber(value);
+		reflection->AddEnum(message,field,enum_value);		
+	}
     else
     {
         luaL_argerror(L, (2), "pb_repeated_add field name type for add  is not support!!");
@@ -200,6 +207,13 @@ static int pb_repeated_get(lua_State* L)
 		Message* msg = reflection->MutableRepeatedMessage(message, field, index);
 		return push_message(L, msg, false);
 	}
+	else if (field->type() == google::protobuf::FieldDescriptor::TYPE_ENUM)
+	{
+		int value = static_cast<int>(luaL_checkinteger(L, 3));
+		const EnumValueDescriptor* enum_value =
+			field->enum_type()->FindValueByNumber(value);
+		reflection->AddEnum(message,field,enum_value);		
+	}
 	else
 	{
 		luaL_argerror(L, 0, "pb_repeated_get, field type for get not support!!!");
@@ -263,6 +277,13 @@ static int pb_repeated_set(lua_State* L)
 		size_t strlen;
 		const char *str = static_cast<const char *>(luaL_checklstring(L, 3, &strlen));
 		reflection->SetRepeatedString(message, field, index, str);
+	}
+	else if (field->type() == google::protobuf::FieldDescriptor::TYPE_ENUM)
+	{
+		int value = static_cast<int>(luaL_checkinteger(L, 3));
+		const EnumValueDescriptor* enum_value =
+			field->enum_type()->FindValueByNumber(value);
+		reflection->AddEnum(message,field,enum_value);		
 	}
 	else
 	{
@@ -383,6 +404,13 @@ static int pb_get(lua_State* L)
     	Message* msg = reflection->MutableMessage(message, field);
     	return push_message(L, msg, false);
 	}
+	else if (field->type() == google::protobuf::FieldDescriptor::TYPE_ENUM)
+	{
+		int value = static_cast<int>(luaL_checkinteger(L, 3));
+		const EnumValueDescriptor* enum_value =
+			field->enum_type()->FindValueByNumber(value);
+		reflection->AddEnum(message,field,enum_value);		
+	}
     return 1;
 }
 
@@ -452,6 +480,13 @@ static int pb_set(lua_State* L)
         int val = static_cast<int>(luaL_checkinteger(L, 3));
         reflection->SetBool(message, field, val);
     }
+    else if (field->type() == google::protobuf::FieldDescriptor::TYPE_ENUM)
+	{
+		int value = static_cast<int>(luaL_checkinteger(L, 3));
+		const EnumValueDescriptor* enum_value =
+			field->enum_type()->FindValueByNumber(value);
+		reflection->AddEnum(message,field,enum_value);		
+	}
     else
     {
     	luaL_argerror(L, 2, "pb_set field_name type error");
